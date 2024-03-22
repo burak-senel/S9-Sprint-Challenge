@@ -1,11 +1,10 @@
 import axios from "axios";
 import React, { useState } from "react";
 
-// önerilen başlangıç stateleri
 const initialMessage = "";
 const initialEmail = "";
 const initialSteps = 0;
-const initialIndex = 4; //  "B" nin bulunduğu indexi
+const initialIndex = 4;
 const initialFormData = {
   email: initialEmail,
   x: null,
@@ -29,6 +28,7 @@ export default function AppFunctional(props) {
   function reset() {
     setActiveIndex(initialIndex);
     setSteps(initialSteps);
+    setFormData(initialFormData);
   }
   function sonrakiIndex(yon) {
     let newIndex = activeIndex;
@@ -82,10 +82,11 @@ export default function AppFunctional(props) {
     axios
       .post("http://localhost:9000/api/result", updatedFormData)
       .then((response) => {
-        console.log("API Response:", response.data);
+        setMessage(response.data.message);
       })
       .catch((error) => {
-        console.error("API Request Error:", error);
+        setMessage(error.response.statusText);
+        console.log(error);
       });
   }
 
