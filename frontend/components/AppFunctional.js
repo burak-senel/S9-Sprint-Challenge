@@ -35,44 +35,36 @@ export default function AppFunctional(props) {
   }
   function sonrakiIndex(yon) {
     let newIndex = activeIndex;
-    let newMessage = "";
+    let newMessage = ""; // Yeni mesajı tanımla
     switch (yon) {
       case "sol":
         newIndex = activeIndex % 3 === 0 ? activeIndex : activeIndex - 1;
-        if (activeIndex !== newIndex) {
-          setSteps(steps + 1);
-        } else {
-          newMessage = "Daha fazla sola gidemezsiniz.";
-        }
+        newMessage =
+          activeIndex === newIndex ? "Daha fazla sola gidemezsiniz." : "";
         break;
       case "sag":
         newIndex = activeIndex % 3 === 2 ? activeIndex : activeIndex + 1;
-        if (activeIndex !== newIndex) {
-          setSteps(steps + 1);
-        } else {
-          newMessage = "Daha fazla sağa gidemezsiniz.";
-        }
+        newMessage =
+          activeIndex === newIndex ? "Daha fazla sağa gidemezsiniz." : "";
         break;
       case "yukari":
         newIndex = activeIndex < 3 ? activeIndex : activeIndex - 3;
-        if (activeIndex !== newIndex) {
-          setSteps(steps + 1);
-        } else {
-          newMessage = "Daha fazla yukarı gidemezsiniz.";
-        }
+        newMessage =
+          activeIndex === newIndex ? "Daha fazla yukarı gidemezsiniz." : "";
         break;
       case "asagi":
         newIndex = activeIndex > 5 ? activeIndex : activeIndex + 3;
-        if (activeIndex !== newIndex) {
-          setSteps(steps + 1);
-        } else {
-          newMessage = "Daha fazla aşağı gidemezsiniz.";
-        }
+        newMessage =
+          activeIndex === newIndex ? "Daha fazla aşağı gidemezsiniz." : "";
         break;
     }
+    if (activeIndex !== newIndex) {
+      setSteps(steps + 1);
+    }
     setActiveIndex(newIndex);
-    setMessage(newMessage);
+    setMessage(newMessage); // Mesajı güncelle
   }
+
   function onChange(evt) {
     // inputun değerini güncellemek için bunu kullanabilirsiniz
   }
