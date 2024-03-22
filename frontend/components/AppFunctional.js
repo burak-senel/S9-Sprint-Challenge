@@ -137,7 +137,9 @@ export default function AppFunctional(props) {
           onChange={handleChange}
           value={formData.email}
         ></input>
-        <input id="submit" type="submit"></input>
+        <button id="submit" type="submit" disabled={formData.email === ""}>
+          Gönder  
+        </button>
       </form>
     </div>
   );
