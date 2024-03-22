@@ -1,32 +1,29 @@
-import React, { useEffect, useState } from "react";
+import axios from "axios";
+import React, { useState } from "react";
 
 // önerilen başlangıç stateleri
 const initialMessage = "";
 const initialEmail = "";
 const initialSteps = 0;
 const initialIndex = 4; //  "B" nin bulunduğu indexi
+const initialFormData = {
+  email: initialEmail,
+  x: null,
+  y: null,
+  steps: null,
+};
 
 export default function AppFunctional(props) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [steps, setSteps] = useState(initialSteps);
   const [message, setMessage] = useState(initialMessage);
-
-  // AŞAĞIDAKİ HELPERLAR SADECE ÖNERİDİR.
-  // Bunları silip kendi mantığınızla sıfırdan geliştirebilirsiniz.
+  const [formData, setFormData] = useState(initialFormData);
 
   function getXY(activeIndex) {
-    // Koordinatları izlemek için bir state e sahip olmak gerekli değildir.
-    // Bunları hesaplayabilmek için "B" nin hangi indexte olduğunu bilmek yeterlidir.
     return {
       x: (activeIndex % 3) + 1,
       y: Math.floor(activeIndex / 3) + 1,
     };
-  }
-
-  function getXYMesaj() {
-    // Kullanıcı için "Koordinatlar (2, 2)" mesajını izlemek için bir state'in olması gerekli değildir.
-    // Koordinatları almak için yukarıdaki "getXY" helperını ve ardından "getXYMesaj"ı kullanabilirsiniz.
-    // tamamen oluşturulmuş stringi döndürür.
   }
 
   function reset() {
@@ -35,7 +32,7 @@ export default function AppFunctional(props) {
   }
   function sonrakiIndex(yon) {
     let newIndex = activeIndex;
-    let newMessage = ""; // Yeni mesajı tanımla
+    let newMessage = "";
     switch (yon) {
       case "sol":
         newIndex = activeIndex % 3 === 0 ? activeIndex : activeIndex - 1;
@@ -62,15 +59,34 @@ export default function AppFunctional(props) {
       setSteps(steps + 1);
     }
     setActiveIndex(newIndex);
-    setMessage(newMessage); // Mesajı güncelle
+    setMessage(newMessage);
   }
 
-  function onChange(evt) {
-    // inputun değerini güncellemek için bunu kullanabilirsiniz
+  function handleChange(evt) {
+    let { name, value } = evt.target;
+    const newState = { ...formData, [name]: value };
+    setFormData(newState);
   }
 
   function onSubmit(evt) {
-    // payloadu POST etmek için bir submit handlera da ihtiyacınız var.
+    evt.preventDefault();
+    const { x, y } = getXY(activeIndex);
+    const updatedFormData = {
+      ...formData,
+      x: x,
+      y: y,
+      steps: steps,
+    };
+    setFormData(updatedFormData);
+    reset();
+    axios
+      .post("http://localhost:9000/api/result", updatedFormData)
+      .then((response) => {
+        console.log("API Response:", response.data);
+      })
+      .catch((error) => {
+        console.error("API Request Error:", error);
+      });
   }
 
   return (
@@ -111,8 +127,15 @@ export default function AppFunctional(props) {
           reset
         </button>
       </div>
-      <form>
-        <input id="email" type="email" placeholder="email girin"></input>
+      <form onSubmit={onSubmit}>
+        <input
+          name="email"
+          id="email"
+          type="email"
+          placeholder="email girin"
+          onChange={handleChange}
+          value={formData.email}
+        ></input>
         <input id="submit" type="submit"></input>
       </form>
     </div>
