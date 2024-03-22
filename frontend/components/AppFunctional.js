@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // önerilen başlangıç stateleri
 const initialMessage = "";
@@ -13,9 +13,13 @@ export default function AppFunctional(props) {
   // AŞAĞIDAKİ HELPERLAR SADECE ÖNERİDİR.
   // Bunları silip kendi mantığınızla sıfırdan geliştirebilirsiniz.
 
-  function getXY() {
+  function getXY(activeIndex) {
     // Koordinatları izlemek için bir state e sahip olmak gerekli değildir.
     // Bunları hesaplayabilmek için "B" nin hangi indexte olduğunu bilmek yeterlidir.
+    return {
+      x: (activeIndex % 3) + 1,
+      y: Math.floor(activeIndex / 3) + 1,
+    };
   }
 
   function getXYMesaj() {
@@ -25,29 +29,35 @@ export default function AppFunctional(props) {
   }
 
   function reset() {
-    // Tüm stateleri başlangıç ​​değerlerine sıfırlamak için bu helperı kullanın.
+    setActiveIndex(initialIndex);
+    setSteps(initialSteps);
   }
-
   function sonrakiIndex(yon) {
     let newIndex = activeIndex;
     switch (yon) {
       case "sol":
         newIndex = activeIndex % 3 === 0 ? activeIndex : activeIndex - 1;
+        if (activeIndex !== newIndex) {
+          setSteps(steps + 1);
+        }
         break;
       case "sag":
         newIndex = activeIndex % 3 === 2 ? activeIndex : activeIndex + 1;
+        if (activeIndex !== newIndex) {
+          setSteps(steps + 1);
+        }
         break;
       case "yukari":
         newIndex = activeIndex < 3 ? activeIndex : activeIndex - 3;
+        if (activeIndex !== newIndex) {
+          setSteps(steps + 1);
+        }
         break;
       case "asagi":
         newIndex = activeIndex > 5 ? activeIndex : activeIndex + 3;
-        break;
-      case "reset":
-        newIndex = initialIndex;
-        break;
-
-      default:
+        if (activeIndex !== newIndex) {
+          setSteps(steps + 1);
+        }
         break;
     }
     setActiveIndex(newIndex);
@@ -64,10 +74,9 @@ export default function AppFunctional(props) {
     <div id="wrapper" className={props.className}>
       <div className="info">
         <h3 id="coordinates">
-          Koordinatlar ({(activeIndex % 3) + 1},{" "}
-          {Math.floor(activeIndex / 3 + 1)})
+          Koordinatlar ({getXY(activeIndex).x}, {getXY(activeIndex).y})
         </h3>
-        <h3 id="steps">0 kere ilerlediniz</h3>
+        <h3 id="steps">{steps} kere ilerlediniz</h3>
       </div>
       <div id="grid">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
@@ -95,7 +104,7 @@ export default function AppFunctional(props) {
         <button onClick={() => sonrakiIndex("asagi")} id="down">
           AŞAĞI
         </button>
-        <button onClick={() => sonrakiIndex("reset")} id="reset">
+        <button onClick={() => reset()} id="reset">
           reset
         </button>
       </div>
